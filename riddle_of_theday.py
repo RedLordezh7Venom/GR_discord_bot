@@ -11,7 +11,7 @@ from pathlib import Path
 
 #Load Gemini Token and configure other variables
 load_dotenv()
-TOKEN = os.environ.get('TOKEN')
+TOKEN = os.environ.get('DISCORD_TOKEN')
 GOOGLE_AI_KEY = os.environ.get('GOOGLE_AI_KEY')
 MAX_HISTORY  = 10
 message_history = {}
