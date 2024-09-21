@@ -288,16 +288,39 @@ async def links(inter: disnake.ApplicationCommandInteraction):
 
 #=================================================================================================================================================================================================
 @Bot.slash_command(name="say", description="Send a message containing the value")
-@commands.has_permissions(kick_members=True)
-async def say(inter, channel_id, message):
-    channel = Bot.get_channel(int(channel_id))
+@commands.has_permissions(administrator=True)  # Require admin permissions
+async def say(inter: disnake.ApplicationCommandInteraction, channel_id , message: str):
+    channel = Bot.get_channel(channel_id)
+    
+    # Check if the channel exists
+    if channel is None:
+        embed = disnake.Embed(
+            title="Error!",
+            description="The specified channel does not exist.",
+            color=0xff0000,
+        )
+        return await inter.send(embed=embed)
+    
+    # Send the message to the specified channel
     await channel.send(message)
+    
     embed = disnake.Embed(
-        title = f"Success!",
-        description = f"Sent the message.",
-        colour = embedcolor,
+        title="Success!",
+        description=f"Sent the message in {channel.mention}.",
+        color=embedcolor,
     )
     await inter.send(embed=embed)
+
+# Error handling for users without permissions
+@say.error
+async def say_error(inter: disnake.ApplicationCommandInteraction, error):
+    if isinstance(error, commands.MissingPermissions):
+        embed = disnake.Embed(
+            title="Permission Denied!",
+            description="You do not have permission to use this command.",
+            color=0xff0000,
+        )
+        await inter.send(embed=embed)
 
 @Bot.slash_command(name="summarise", description="Summarise chat upto a week")
 #@commands.has_permissions(kick_members=True) #<--Remove this comment for admin perms only command 
